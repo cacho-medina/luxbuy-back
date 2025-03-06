@@ -1,0 +1,31 @@
+version: "3.8"
+
+services:
+  database:
+    image: postgres:15
+    container_name: postgres_db
+    restart: always
+    environment:
+      POSTGRES_USER: myuser
+      POSTGRES_PASSWORD: mypassword
+      POSTGRES_DB: mydatabase
+    ports:
+      - "5432:5432"
+    volumes:
+      - pg_data:/var/lib/postgresql/data
+
+  backend:
+    build: .
+    container_name: nest_backend
+    restart: always
+    depends_on:
+      - database
+    environment:
+      DATABASE_URL: postgresql://myuser:mypassword@database:5432/mydatabase
+    env_file:
+      - .env 
+    ports:
+      - "3001:3000"
+
+volumes:
+  pg_data:

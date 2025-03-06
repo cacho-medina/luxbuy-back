@@ -1,23 +1,34 @@
-# Usa una imagen oficial de Node.js
-FROM node:20
+# Usa una imagen de Node.js optimizada
+FROM node:20-alpine
 
-# Establece el directorio de trabajo
+# Instala dependencias necesarias
+RUN apk add --no-cache python3 py3-pip make g++ pkgconf pixman-dev cairo-dev pango-dev libjpeg-turbo-dev freetype-dev
+
+# Establece el directorio de trabajo dentro del contenedor
 WORKDIR /app
 
-# Copia el package.json y package-lock.json
+# Copia los archivos de dependencias
 COPY package*.json ./
 
-# Instala las dependencias
+# Instala todas las dependencias (incluye Prisma CLI)
 RUN npm install
 
-# Copia el resto del código de la aplicación
+# Copia el resto de la aplicación
 COPY . .
 
-# Compila TypeScript (si aplica)
+# Generar el Cliente de Prisma antes de compilar
+RUN npx prisma generate
+
+# Copiar el archivo .env al contenedor
+COPY .env .env
+
+# Compila el proyecto
 RUN npm run build
 
-# Expone el puerto en el que corre la app
+# Expone el puerto de la app
 EXPOSE 3000
 
-# Comando para iniciar el servidor
-CMD ["node", "dist/index.js"]
+# Comando de inicio corregido
+CMD ["npm", "run", "start"]
+
+
