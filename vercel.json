@@ -11,10 +11,5 @@
       "dest": "./src/main.ts",
       "methods": ["GET", "POST", "PUT", "DELETE"]
     }
-  ],
-  "functions": {
-    "api/*.js": {
-      "runtime": "nodejs20.x"
-    }
-  }
+  ]
 }
